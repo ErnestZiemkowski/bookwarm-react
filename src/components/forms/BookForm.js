@@ -13,11 +13,26 @@ class BookForm extends Component {
       pages: this.props.book.pages
     },
     covers: this.props.book.covers,
+    index: 0,
     loading: false,
     errors: {}
   };
 
-  onChange = e => {
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            data: {
+                goodreadId: nextProps.book.goodreadId,
+                title: nextProps.book.title,
+                authors: nextProps.book.authors,
+                cover: nextProps.book.covers[0],
+                pages: nextProps.book.pages
+            },
+            covers: nextProps.book.covers,
+        });
+    }
+
+
+    onChange = e => {
     this.setState({
       ...this.state,
       data: { ...this.state.data, [e.target.name]: e.target.value }
@@ -37,6 +52,18 @@ class BookForm extends Component {
     this.setState({ errors });
   };
 
+  changeCover = () => {
+      const {index, covers, data} = this.state;
+      const newIndex = index + 1 >= covers.length ? 0 : index + 1;
+      this.setState({
+          index: newIndex,
+          data: {
+              ...data,
+              cover: covers[newIndex]
+          }
+      });
+  };
+
   validate = data => {
     const errors = {};
     if (!data.title) errors.title = "Can not be blank!";
@@ -46,7 +73,7 @@ class BookForm extends Component {
   };
 
   render() {
-    const {errors, data, loading} = this.state;
+    const {errors, data, loading, covers} = this.state;
 
     return (
       <Segment>
@@ -95,6 +122,11 @@ class BookForm extends Component {
 
               <Grid.Column>
                 <Image size="small" src={data.cover} />
+                  {covers.length > 1 && (
+                      <a role="button" tabIndex={0} onClick={this.changeCover}>
+                          Another cover
+                      </a>
+                  )}
               </Grid.Column>
             </Grid.Row>
             <Button primary>Save</Button>
