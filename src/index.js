@@ -10,6 +10,8 @@ import decode from 'jwt-decode';
 import rootReducer from './rootReducer';
 import App from './App';
 import {userLoggedIn} from "./actions/auth";
+import setAuthorizationHeader from "./utils/setAuthorizationHeader";
+
 
 const store = createStore(
     rootReducer,
@@ -23,6 +25,7 @@ if (localStorage.bookwormJWT) {
         email: payload.email,
         confirmed: payload.confirmed
     };
+    setAuthorizationHeader(localStorage.bookwormJWT);
     store.dispatch(userLoggedIn(user));
 }
 
